@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eviction Auction Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="auction-thing.css">
+</head>
+<body>
+<div class="container">
+    <h1>Eviction Auction Generator</h1>
+    <form id="auctionForm" autocomplete="off">
+        <label for="plot">Plot Name:</label>
+        <input type="text" id="plot" name="plot">
+
+        <label for="resell_price">Resell Price:</label>
+        <input type="text" id="resell_price" name="resell_price">
+
+        <label for="min_increase">Minimum Increase (leave empty for $500):</label>
+        <input type="text" id="min_increase" name="min_increase">
+
+        <button type="submit">Generate Template</button>
+    </form>
+    <div id="error" class="error"></div>
+    <div id="result" class="result" style="display:none;"></div>
+    <button id="copyBtn" class="copy-btn" style="display:none;">Copy to Clipboard</button>
+</div>
+<!-- Link to external JavaScript file -->
+<script src="auction-thing.js"></script>
+</body>
+</html>
