@@ -1,0 +1,79 @@
+body {
+    background: #f7f9fc;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.container {
+    background: #fff;
+    max-width: 450px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin: 40px auto 0 auto;
+    padding: 32px 24px 24px 24px;
+    border-radius: 12px;
+}
+
+h1 {
+    font-size: 1.4em;
+    text-align: center;
+    margin-bottom: 18px;
+    color: #28384d;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 3px;
+    color: #47516b;
+}
+
+.form-group input,
+.form-group select {
+    padding: 7px 10px;
+    border: 1px solid #c7d0e1;
+    border-radius: 5px;
+    font-size: 1em;
+    background: #f3f6fa;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #5a7ade;
+}
+
+.info-group {
+    margin: 18px 0 10px 0;
+    color: #49516d;
+    font-size: 1em;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.button-group button {
+    background: #4b6ed6;
+    border: none;
+    color: #fff;
+    padding: 10px 0;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.button-group button:hover {
+    background: #3f5cbf;
+}

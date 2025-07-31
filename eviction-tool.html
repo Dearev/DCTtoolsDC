@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DemocracyCraft Eviction Tool</title>
+    <link rel="stylesheet" href="eviction-tool.css">
+</head>
+<body>
+    <div class="container">
+        <h1>DemocracyCraft Eviction Tool</h1>
+        <form id="evictionForm" autocomplete="off">
+            <div class="form-group">
+                <label for="plot">Plot:</label>
+                <input type="text" id="plot" name="plot" required>
+            </div>
+            <div class="form-group">
+                <label for="owner">Plot Owner:</label>
+                <input type="text" id="owner" name="owner" required>
+            </div>
+            <div class="form-group">
+                <label for="link">Link to Report:</label>
+                <input type="text" id="link" name="link" required>
+            </div>
+            <div class="form-group">
+                <label for="reason">Reason:</label>
+                <select id="reason" name="reason" required>
+                    <option value="">Select a reason</option>
+                    <option value="Eyesore">Eyesore</option>
+                    <option value="Lack of Progress">Lack of Progress</option>
+                    <option value="Non-Compliance">Non-Compliance</option>
+                    <option value="Inactivity">Inactivity</option>
+                </select>
+            </div>
+            <div class="info-group">
+                <div id="daysLabel">Days to fix: </div>
+                <div id="dateLabel">Eviction Date: </div>
+            </div>
+            <div class="button-group">
+                <button type="button" id="copySolutionBtn">Copy How to Solve</button>
+                <button type="button" id="copyCommandBtn">Copy Eviction Notice Command</button>
+            </div>
+        </form>
+    </div>
+    <script src="eviction-tool.js"></script>
+</body>
+</html>
