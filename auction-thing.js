@@ -28,7 +28,7 @@ document.getElementById('auctionForm').onsubmit = function(e) {
         return;
     }
 
-    const minInc = minIncrease === "" ? "500" : minIncrease;
+    const minInc = minIncrease === "" ? "1000" : minIncrease;
 
     const template = `${plot} -- EVICTION AUCTION
 🪙 **Starting Bid:** ${startingBid} 
