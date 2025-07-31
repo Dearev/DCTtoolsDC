@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>App Switcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="switcher.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Choose an App</h1>
+    <div class="card-row">
+      <div class="app-card" id="auction-thing-card" tabindex="0" onclick="switchApp('auction-thing.html')" onkeypress="if(event.key==='Enter'){switchApp('auction-thing.html');}">
+        <div class="app-icon">🏦</div>
+        <div class="app-title">Auction Thing</div>
+        <div class="app-desc">Start auctions and bid for items.</div>
+      </div>
+      <div class="app-card" id="eviction-tool-card" tabindex="0" onclick="switchApp('eviction-tool.html')" onkeypress="if(event.key==='Enter'){switchApp('eviction-tool.html');}">
+        <div class="app-icon">🏠❌</div>
+        <div class="app-title">Eviction Tool</div>
+        <div class="app-desc">Generate eviction notices easily.</div>
+      </div>
+    </div>
+  </div>
+  <script src="switcher.js"></script>
+</body>
+</html>
