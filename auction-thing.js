@@ -22,7 +22,7 @@ document.getElementById('auctionForm').onsubmit = function(e) {
     try {
         resellPrice = parseFloat(resellPriceStr);
         if (isNaN(resellPrice)) throw "NaN";
-        startingBid = Math.round(resellPrice * 5 / 9);
+        startingBid = Math.round(resellPrice/2);
     } catch {
         errorDiv.textContent = "Resell Price must be a number.";
         return;
@@ -31,52 +31,50 @@ document.getElementById('auctionForm').onsubmit = function(e) {
     const minInc = minIncrease === "" ? "500" : minIncrease;
 
     const template = `${plot} -- EVICTION AUCTION
-🪙 Starting Bid: ${startingBid} 
-This is the price of the first eligible bid.
+🪙 **Starting Bid:** ${startingBid} 
+-# This is the price of the first eligible bid.
 
-📈 Minimum Increase: ${minInc}
-You must bid at least this number higher than the last eligible bid!
+📈 **Minimum Increase:** ${minInc}
+-# You must bid at least this number higher than the last eligible bid!
 
-🕙  Auction Ends: 24 hours after last bid.
-You must bid within this time after the last eligible bid!
+🕙  **Auction Ends:** 24 hours after last bid.
+-# You must bid within this time after the last eligible bid!
 
-🏛️  Auction Levy Tax Rates
-Do you own a property portfolio? If you own over a certain amount of plots, you need to pay a tax. This tax is designed to give less established players an opportunity to enter the market.
+🏛️  **Auction Levy Tax/Fee Rates**
+-# Do you own a property portfolio? If you own over a certain amount of C/I/F plots, you need to pay a tax. This tax is designed to give less established players an opportunity to enter the market.
+-# The Department replicates this tax with a fee equal to the levy for all other properties.
 
-0-9 plots → You pay 0% of your bid extra
+> 0-9 plots → You pay 0% of your bid extra
+>
+> 10-14 plots → You pay 25% of your bid extra 
+>
+> 15-20 plots → You pay 50% of your bid extra
+>
+> 20+ plots → You pay 75% of your bid extra
 
-10-14 plots → You pay 25% of your bid extra 
+🚩 **Significant fines apply:** Failing to include or pay for your auction levy will result in significant enforcement action.
 
-15-20 plots → You pay 50% of your bid extra
+> Bids by players who own enough plots to warrant an auction levy tax must include the amount of tax that would be paid if the bid is successful. 
+> 
+> Bidders are responsible for calculating this, and must include the tax amount in their bid message as a separate amount from the amount they are bidding.
+> 
+> Any bid not including the tax amount (when applicable) or including a miscalculated amount is to be considered invalid.
+> 
+> If a winning bidder cannot pay the tax, a new auction will be held, and the bidder will also face Auction Levy Neglect charges.
+> 
+> Taking actions with the sole intent to avoid paying the auction levy while still receiving the plot or the benefit from it will result in fines, plot eviction and ban from eviction auctions for up to two weeks.
 
-20+ plots → You pay 75% of your bid extra
-
-🚩 Significant fines apply: Failing to include or pay for your auction levy will result in significant enforcement action.
-
-> Bids by players who own enough plots to warrant an auction levy tax must include the amount of 
-> tax that would be paid if the bid is successful.  
-
-> Bidders are responsible for calculating this, and must include the tax amount in their bid message  
-> as a separate amount from the amount they are bidding. 
-
-> Any bid not including the tax amount (when applicable) or including a miscalculated amount is to 
-> be considered invalid. 
-
-> If a winning bidder cannot pay the tax, a new auction will be held, and the bidder will also face 
-> Auction Levy Neglect charges. 
-
-> Taking actions with the sole intent to avoid paying the auction levy while still receiving the plot or 
-> the benefit from it will result in fines, plot eviction and ban from eviction auctions for up to two 
-> weeks. 
-
-🙋‍♂️ Making a Bid 
+🙋‍♂️ **Making a Bid** 
 We recommend the following template for bidding!
-Change to suit!
+-# Change to suit!
 
 Bid: $0 (bank/balance)
 Levy: $0 (0%)
 
-Lets start the bidding!`;
+**Lets start the bidding!**
+-# By participating in an auction, you agree to the terms of, and to be bound to, the Department's Auction Policy. [Read Here](https://www.democracycraft.net/threads/auction-policy.17176/)
+
+`;
 
     resultDiv.textContent = template;
     resultDiv.style.display = "block";
