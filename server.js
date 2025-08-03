@@ -1,31 +1,21 @@
+// server.js
+
 const express = require('express');
-const fetch = require('node-fetch');
-const cors = require('cors');
-
+const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
-const API_KEY = process.env.API_KEY;
 
-app.use(cors());
+// Use environment port or default to 3000
+const port = process.env.PORT || 3000;
 
-app.get('/threads', async (req, res) => {
-  try {
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 50;
+// Serve all static files (HTML, JS, CSS, etc.) from the root directory
+app.use(express.static(path.join(__dirname)));
 
-    const response = await fetch(`https://www.democracycraft.net/api/threads?page=${page}&limit=${limit}`, {
-      headers: {
-        'XF-Api-Key': API_KEY
-      }
-    });
-
-    const data = await response.json();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+// Optional: fallback route for unknown paths (redirects to index.html or 404 message)
+app.get('*', (req, res) => {
+  res.status(404).send('404 - Page Not Found');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start the server
+app.listen(port, () => {
+  console.log(`✅ Server is running on port ${port}`);
 });
