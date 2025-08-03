@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: 18
 
+      - name: Install dependencies  # ✅ THIS STEP IS MISSING IN YOUR VERSION
+        run: npm install
+
       - name: Run fetch script
         run: node fetch.js
         env:
