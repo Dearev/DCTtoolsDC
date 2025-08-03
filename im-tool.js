@@ -1,4 +1,4 @@
-const API_URL = '/threads';
+const API_URL = 'https://www.democracycraft.net/api/threads';
 const TARGET_NODE_ID = 62;
 const PAGE_LIMIT = 50;
 // TEST
@@ -146,5 +146,6 @@ async function init() {
 }
 
 init();
+
 
 
