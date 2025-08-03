@@ -1,21 +1,40 @@
 // server.js
-
 const express = require('express');
+const fetch = require('node-fetch'); // v2 for CommonJS
 const path = require('path');
+require('dotenv').config();
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Use environment port or default to 3000
-const port = process.env.PORT || 3000;
+// Serve static files (like im-tool.js, HTML, CSS)
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve all static files (HTML, JS, CSS, etc.) from the root directory
-app.use(express.static(path.join(__dirname)));
+// Proxy for /threads
+app.get('/threads', async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 50;
 
-// Optional: fallback route for unknown paths (redirects to index.html or 404 message)
-app.get('*', (req, res) => {
-  res.status(404).send('404 - Page Not Found');
+    const response = await fetch(`https://www.democracycraft.net/api/threads?page=${page}&limit=${limit}`, {
+      headers: {
+        'XF-Api-Key': process.env.XF_API_KEY
+      }
+    });
+
+    if (!response.ok) {
+      return res.status(response.status).send(`Upstream error ${response.status}`);
+    }
+
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    console.error('❌ Proxy failed:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`✅ Server is running on port ${port}`);
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
