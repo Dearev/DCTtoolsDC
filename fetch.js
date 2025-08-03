@@ -5,11 +5,16 @@ const API_KEY = process.env.API_KEY;
 const PAGE_LIMIT = 50;
 const TARGET_NODE_ID = 62;
 const BASE_URL = 'https://www.democracycraft.net/api/threads';
+const MAX_PAGES = 100; // safety limit for pagination
+
+if (!API_KEY) {
+  console.error('❌ Missing API_KEY in environment variables');
+  process.exit(1);
+}
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// extract date from thread title
 function extractDateFromTitle(title) {
   const match = title.match(/\|\s*([A-Za-z]{3,9}) (\d{1,2}), (\d{4})/);
   if (!match) return null;
@@ -35,25 +40,49 @@ function extractDateFromTitle(title) {
   return parsed;
 }
 
-// get all threads across pages
+// Retry-once fetch wrapper
+async function safeFetch(url, options, retries = 1) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const res = await fetch(url, options);
+    if (res.ok) return res;
+
+    const text = await res.text();
+    if (res.status === 400 && attempt < retries) {
+      console.warn(`⚠️ HTTP 400 on attempt ${attempt + 1}, retrying...`);
+      await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+      continue;
+    }
+
+    throw new Error(`HTTP ${res.status} - ${res.statusText}\nURL: ${url}\nBody: ${text}`);
+  }
+}
+
 async function fetchAllThreads() {
   let page = 1;
   const allThreads = [];
 
-  while (true) {
-    const res = await fetch(`${BASE_URL}?page=${page}&limit=${PAGE_LIMIT}`, {
+  while (page <= MAX_PAGES) {
+    const url = `${BASE_URL}?page=${page}&limit=${PAGE_LIMIT}`;
+    console.log(`🔄 Fetching page ${page}: ${url}`);
+
+    const res = await safeFetch(url, {
       headers: { 'XF-Api-Key': API_KEY }
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+    let data;
+    try {
+      data = await res.json();
+    } catch (err) {
+      const text = await res.text();
+      throw new Error(`Failed to parse JSON. Raw response: ${text}`);
+    }
 
-    const data = await res.json();
     const threads = data.threads;
-
     if (!threads || threads.length === 0) break;
 
     allThreads.push(...threads);
     if (threads.length < PAGE_LIMIT) break;
+
     page++;
   }
 
@@ -76,7 +105,6 @@ async function fetchAllThreads() {
       return false;
     });
 
-    // shrink output: only keep needed fields
     const minimalThreads = filtered.map(t => ({
       thread_id: t.thread_id,
       title: t.title,
@@ -84,11 +112,10 @@ async function fetchAllThreads() {
       view_url: t.view_url
     }));
 
-    fs.writeFileSync('data.json', JSON.stringify({ threads: minimalThreads }));
+    fs.writeFileSync('data.json', JSON.stringify({ threads: minimalThreads }, null, 2));
     console.log(`✅ Saved ${minimalThreads.length} filtered threads`);
   } catch (err) {
-    console.error('❌ Fetch failed:', err);
+    console.error('❌ Fetch failed:', err.message);
     process.exit(1);
   }
 })();
-
