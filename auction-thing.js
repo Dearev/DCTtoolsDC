@@ -32,13 +32,10 @@ document.getElementById('auctionForm').onsubmit = function(e) {
 
     const template = `${plot} -- EVICTION AUCTION
 🪙 **Starting Bid:** ${startingBid} 
--# This is the price of the first eligible bid.
 
 📈 **Minimum Increase:** ${minInc}
--# You must bid at least this number higher than the last eligible bid!
 
 🕙  **Auction Ends:** 24 hours after last bid.
--# You must bid within this time after the last eligible bid!
 
 🏛️  **Auction Levy Tax/Fee Rates**
 -# Do you own a property portfolio? If you own over a certain amount of C/I/F plots, you need to pay a tax. This tax is designed to give less established players an opportunity to enter the market.
@@ -87,3 +84,4 @@ Levy: $0 (0%)
         });
     };
 };
+
