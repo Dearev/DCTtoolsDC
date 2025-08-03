@@ -1,16 +1,10 @@
-// server.js
 const express = require('express');
-const fetch = require('node-fetch'); // v2 for CommonJS
-const path = require('path');
+const fetch = require('node-fetch'); // v2
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files (like im-tool.js, HTML, CSS)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Proxy for /threads
 app.get('/threads', async (req, res) => {
   try {
     const page = req.query.page || 1;
@@ -22,19 +16,14 @@ app.get('/threads', async (req, res) => {
       }
     });
 
-    if (!response.ok) {
-      return res.status(response.status).send(`Upstream error ${response.status}`);
-    }
-
     const data = await response.json();
     res.json(data);
-  } catch (err) {
-    console.error('❌ Proxy failed:', err);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error) {
+    console.error('Fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch threads' });
   }
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
