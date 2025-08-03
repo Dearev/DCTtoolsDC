@@ -1,5 +1,4 @@
 const API_URL = '/threads';
-https://www.democracycraft.net/api/threads';
 const TARGET_NODE_ID = 62;
 const PAGE_LIMIT = 50;
 
@@ -32,7 +31,6 @@ function extractDateFromTitle(title) {
   return parsed;
 }
 
-
 function extractPlotCode(title) {
   const parts = title.split('|');
   if (parts.length < 2) return 'UNKNOWN';
@@ -41,26 +39,18 @@ function extractPlotCode(title) {
   return plot || 'UNKNOWN';
 }
 
-
 function getStartPage() {
   const params = new URLSearchParams(window.location.search);
   return parseInt(params.get('startPage')) || 1;
 }
 
-
 async function fetchPendingReports() {
   const allThreads = [];
   let page = getStartPage();
 
-
   try {
     while (true) {
-      const response = await fetch(`${API_URL}?page=${page}&limit=${PAGE_LIMIT}`, {
-        headers: {
-          'XF-Api-Key': API_KEY
-        }
-      });
-
+      const response = await fetch(`${API_URL}?page=${page}&limit=${PAGE_LIMIT}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status} – ${response.statusText}`);
       }
@@ -75,19 +65,14 @@ async function fetchPendingReports() {
       page++;
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
     return allThreads
       .filter(t => t.node_id === TARGET_NODE_ID)
       .filter(t => {
         if (t.prefix_id === 130) return true;
-
         if (t.prefix_id === 5) {
           const date = extractDateFromTitle(t.title);
           return date && date <= today;
         }
-
         return false;
       });
 
@@ -96,9 +81,6 @@ async function fetchPendingReports() {
     throw err;
   }
 }
-
-
-
 
 function createReportCard(thread) {
   const plot = extractPlotCode(thread.title);
