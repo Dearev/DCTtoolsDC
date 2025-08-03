@@ -1,7 +1,7 @@
 const API_URL = '/threads';
 const TARGET_NODE_ID = 62;
 const PAGE_LIMIT = 50;
-
+// TEST
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
@@ -146,4 +146,5 @@ async function init() {
 }
 
 init();
+
 
