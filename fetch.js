@@ -15,7 +15,6 @@ if (!API_KEY) {
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// Extracts date from thread title like: "| July 21, 2025"
 function extractDateFromTitle(title) {
   const match = title.match(/\|\s*([A-Za-z]{3,9}) (\d{1,2}), (\d{4})/);
   if (!match) return null;
@@ -50,18 +49,19 @@ async function fetchAllThreads() {
     console.log(`🔄 Fetching page ${page}: ${url}`);
 
     let res;
+    let text;
+
     try {
       res = await fetch(url, {
         headers: { 'XF-Api-Key': API_KEY }
       });
+      text = await res.text();
     } catch (err) {
       console.error(`❌ Network error on page ${page}:`, err.message);
       process.exit(1);
     }
 
-    const text = await res.text();
-
-    // Stop if we've hit an invalid page (end of thread list)
+    // Check for invalid page
     if (res.status === 400 && text.includes('"code":"invalid_page"')) {
       console.log(`✅ Reached last valid page (max page ${page - 1})`);
       break;
@@ -98,7 +98,6 @@ async function fetchAllThreads() {
   try {
     const allThreads = await fetchAllThreads();
 
-    // Only keep threads from the target node and with valid prefixes/dates
     const filtered = allThreads.filter(t => {
       if (t.node_id !== TARGET_NODE_ID) return false;
       if (t.prefix_id === 130) return true;
