@@ -47,7 +47,24 @@ async function safeFetch(url, options, retries = 1) {
     if (res.ok) return res;
 
     const text = await res.text();
-    if (res.status === 400 && attempt < retries) {
+    if (res.status === 400) {
+  const text = await res.text();
+
+  // Check if it's the invalid_page error, and break the pagination loop
+  if (text.includes('"code":"invalid_page"')) {
+    console.log('✅ Reached the last valid page');
+    break; // exit pagination loop
+  }
+
+  if (attempt < retries) {
+    console.warn(`⚠️ HTTP 400 on attempt ${attempt + 1}, retrying...`);
+    await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+    continue;
+  }
+
+  throw new Error(`HTTP 400 - Bad Request\nURL: ${url}\nBody: ${text}`);
+}
+
       console.warn(`⚠️ HTTP 400 on attempt ${attempt + 1}, retrying...`);
       await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
       continue;
