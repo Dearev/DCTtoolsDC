@@ -35,7 +35,10 @@ function extractDateFromTitle(title) {
     Dec: 11, December: 11
   };
 
-  const parsed = new Date(parseInt(yearStr), monthMap[monthStr], parseInt(dayStr));
+  const monthIndex = monthMap[monthStr];
+  if (monthIndex === undefined) return null;
+
+  const parsed = new Date(parseInt(yearStr), monthIndex, parseInt(dayStr));
   parsed.setHours(0, 0, 0, 0);
   return parsed;
 }
@@ -61,17 +64,27 @@ async function fetchAllThreads() {
       process.exit(1);
     }
 
-    // Check for invalid page
-    if (res.status === 400 && text.includes('"code":"invalid_page"')) {
-      console.log(`✅ Reached last valid page (max page ${page - 1})`);
-      break;
-    } else if (!res.ok) {
-       console.error(`❌ HTTP ${res.status} - ${res.statusText}`);
-       console.error(`URL: ${url}`);
-       console.error(`Response: ${text}`);
-       process.exit(1);
+    let errorJson = null;
+    try {
+      errorJson = JSON.parse(text);
+    } catch (_) {
+      // leave errorJson as null
     }
 
+    // Gracefully handle invalid_page error
+    if (
+      res.status === 400 &&
+      errorJson?.errors?.[0]?.code === "invalid_page"
+    ) {
+      const max = errorJson.errors[0].params?.max ?? page - 1;
+      console.log(`✅ Reached last valid page (max page ${max})`);
+      break;
+    } else if (!res.ok) {
+      console.error(`❌ HTTP ${res.status} - ${res.statusText}`);
+      console.error(`URL: ${url}`);
+      console.error(`Response: ${text}`);
+      process.exit(1);
+    }
 
     let data;
     try {
@@ -118,6 +131,7 @@ async function fetchAllThreads() {
 
     fs.writeFileSync('data.json', JSON.stringify({ threads: minimalThreads }, null, 2));
     console.log(`✅ Saved ${minimalThreads.length} filtered threads to data.json`);
+    process.exit(0); // Explicit success exit
   } catch (err) {
     console.error('❌ Script failed:', err.message);
     process.exit(1);
