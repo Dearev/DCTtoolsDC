@@ -5,7 +5,7 @@ const API_KEY = process.env.API_KEY;
 const PAGE_LIMIT = 50;
 const TARGET_NODE_ID = 62;
 const BASE_URL = 'https://www.democracycraft.net/api/threads';
-const MAX_PAGES = 100; // safety limit for pagination
+const MAX_PAGES = 100;
 
 if (!API_KEY) {
   console.error('❌ Missing API_KEY in environment variables');
@@ -15,6 +15,7 @@ if (!API_KEY) {
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
+// Parse date from thread title
 function extractDateFromTitle(title) {
   const match = title.match(/\|\s*([A-Za-z]{3,9}) (\d{1,2}), (\d{4})/);
   if (!match) return null;
@@ -40,37 +41,30 @@ function extractDateFromTitle(title) {
   return parsed;
 }
 
-// Retry-once fetch wrapper
+// Simple fetch wrapper with retry logic for non-400s
 async function safeFetch(url, options, retries = 1) {
   for (let attempt = 0; attempt <= retries; attempt++) {
-    const res = await fetch(url, options);
-    if (res.ok) return res;
+    try {
+      const res = await fetch(url, options);
+      if (res.ok) return res;
 
-    const text = await res.text();
-    if (res.status === 400) {
-  const text = await res.text();
+      const text = await res.text();
 
-  // Check if it's the invalid_page error, and break the pagination loop
-  if (text.includes('"code":"invalid_page"')) {
-    console.log('✅ Reached the last valid page');
-    break; // exit pagination loop
-  }
+      if (attempt < retries && res.status !== 400) {
+        console.warn(`⚠️ Retry ${attempt + 1}: HTTP ${res.status}`);
+        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+        continue;
+      }
 
-  if (attempt < retries) {
-    console.warn(`⚠️ HTTP 400 on attempt ${attempt + 1}, retrying...`);
-    await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
-    continue;
-  }
-
-  throw new Error(`HTTP 400 - Bad Request\nURL: ${url}\nBody: ${text}`);
-}
-
-      console.warn(`⚠️ HTTP 400 on attempt ${attempt + 1}, retrying...`);
-      await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
-      continue;
+      return { res, text }; // return raw for caller to handle 400s like invalid_page
+    } catch (err) {
+      if (attempt < retries) {
+        console.warn(`⚠️ Network error, retrying... (${attempt + 1})`);
+        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+      } else {
+        throw new Error(`❌ Network error: ${err.message}`);
+      }
     }
-
-    throw new Error(`HTTP ${res.status} - ${res.statusText}\nURL: ${url}\nBody: ${text}`);
   }
 }
 
@@ -82,15 +76,23 @@ async function fetchAllThreads() {
     const url = `${BASE_URL}?page=${page}&limit=${PAGE_LIMIT}`;
     console.log(`🔄 Fetching page ${page}: ${url}`);
 
-    const res = await safeFetch(url, {
+    const { res, text } = await safeFetch(url, {
       headers: { 'XF-Api-Key': API_KEY }
     });
 
+    if (res.status === 400 && text.includes('"code":"invalid_page"')) {
+      console.log(`✅ Reached the last valid page (max page ${page - 1})`);
+      break;
+    }
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} - ${res.statusText}\nURL: ${url}\nBody: ${text}`);
+    }
+
     let data;
     try {
-      data = await res.json();
+      data = JSON.parse(text);
     } catch (err) {
-      const text = await res.text();
       throw new Error(`Failed to parse JSON. Raw response: ${text}`);
     }
 
