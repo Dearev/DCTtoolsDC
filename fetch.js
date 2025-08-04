@@ -15,7 +15,7 @@ if (!API_KEY) {
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// Parse date from thread title
+// Extracts date from thread title like: "| July 21, 2025"
 function extractDateFromTitle(title) {
   const match = title.match(/\|\s*([A-Za-z]{3,9}) (\d{1,2}), (\d{4})/);
   if (!match) return null;
@@ -41,33 +41,6 @@ function extractDateFromTitle(title) {
   return parsed;
 }
 
-// Simple fetch wrapper with retry logic for non-400s
-async function safeFetch(url, options, retries = 1) {
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const res = await fetch(url, options);
-      if (res.ok) return res;
-
-      const text = await res.text();
-
-      if (attempt < retries && res.status !== 400) {
-        console.warn(`⚠️ Retry ${attempt + 1}: HTTP ${res.status}`);
-        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
-        continue;
-      }
-
-      return { res, text }; // return raw for caller to handle 400s like invalid_page
-    } catch (err) {
-      if (attempt < retries) {
-        console.warn(`⚠️ Network error, retrying... (${attempt + 1})`);
-        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
-      } else {
-        throw new Error(`❌ Network error: ${err.message}`);
-      }
-    }
-  }
-}
-
 async function fetchAllThreads() {
   let page = 1;
   const allThreads = [];
@@ -76,28 +49,41 @@ async function fetchAllThreads() {
     const url = `${BASE_URL}?page=${page}&limit=${PAGE_LIMIT}`;
     console.log(`🔄 Fetching page ${page}: ${url}`);
 
-    const { res, text } = await safeFetch(url, {
-      headers: { 'XF-Api-Key': API_KEY }
-    });
+    let res;
+    try {
+      res = await fetch(url, {
+        headers: { 'XF-Api-Key': API_KEY }
+      });
+    } catch (err) {
+      console.error(`❌ Network error on page ${page}:`, err.message);
+      process.exit(1);
+    }
 
+    const text = await res.text();
+
+    // Stop if we've hit an invalid page (end of thread list)
     if (res.status === 400 && text.includes('"code":"invalid_page"')) {
-      console.log(`✅ Reached the last valid page (max page ${page - 1})`);
+      console.log(`✅ Reached last valid page (max page ${page - 1})`);
       break;
     }
 
     if (!res.ok) {
-      throw new Error(`HTTP ${res.status} - ${res.statusText}\nURL: ${url}\nBody: ${text}`);
+      console.error(`❌ HTTP ${res.status} - ${res.statusText}`);
+      console.error(`URL: ${url}`);
+      console.error(`Response: ${text}`);
+      process.exit(1);
     }
 
     let data;
     try {
       data = JSON.parse(text);
     } catch (err) {
-      throw new Error(`Failed to parse JSON. Raw response: ${text}`);
+      console.error('❌ Failed to parse JSON:', text);
+      process.exit(1);
     }
 
     const threads = data.threads;
-    if (!threads || threads.length === 0) break;
+    if (!Array.isArray(threads) || threads.length === 0) break;
 
     allThreads.push(...threads);
     if (threads.length < PAGE_LIMIT) break;
@@ -112,6 +98,7 @@ async function fetchAllThreads() {
   try {
     const allThreads = await fetchAllThreads();
 
+    // Only keep threads from the target node and with valid prefixes/dates
     const filtered = allThreads.filter(t => {
       if (t.node_id !== TARGET_NODE_ID) return false;
       if (t.prefix_id === 130) return true;
@@ -132,9 +119,9 @@ async function fetchAllThreads() {
     }));
 
     fs.writeFileSync('data.json', JSON.stringify({ threads: minimalThreads }, null, 2));
-    console.log(`✅ Saved ${minimalThreads.length} filtered threads`);
+    console.log(`✅ Saved ${minimalThreads.length} filtered threads to data.json`);
   } catch (err) {
-    console.error('❌ Fetch failed:', err.message);
+    console.error('❌ Script failed:', err.message);
     process.exit(1);
   }
 })();
