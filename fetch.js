@@ -65,14 +65,13 @@ async function fetchAllThreads() {
     if (res.status === 400 && text.includes('"code":"invalid_page"')) {
       console.log(`✅ Reached last valid page (max page ${page - 1})`);
       break;
+    } else if (!res.ok) {
+       console.error(`❌ HTTP ${res.status} - ${res.statusText}`);
+       console.error(`URL: ${url}`);
+       console.error(`Response: ${text}`);
+       process.exit(1);
     }
 
-    if (!res.ok) {
-      console.error(`❌ HTTP ${res.status} - ${res.statusText}`);
-      console.error(`URL: ${url}`);
-      console.error(`Response: ${text}`);
-      process.exit(1);
-    }
 
     let data;
     try {
