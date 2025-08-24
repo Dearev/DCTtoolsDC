@@ -1,32 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Eviction Auction Generator</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Link to external CSS file -->
-    <link rel="stylesheet" href="auction-thing.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eviction Auction Generator</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121830;
+      --muted: #9aa4c7;
+      --text: #e8ecff;
+      --accent: #7aa2ff;
+      --accent-2: #a77bff;
+      --danger: #ff5e6c;
+      --border: #283055;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(122,162,255,.15), transparent),
+        radial-gradient(1000px 800px at 110% 10%, rgba(167,123,255,.16), transparent),
+        var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+
+    form {
+      display: grid;
+      gap: 18px;
+    }
+
+    label {
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    input {
+      margin-top: 6px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s ease;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(122,162,255,.25);
+    }
+
+    button[type="submit"], .copy-btn {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,.25);
+    }
+
+    .error {
+      color: var(--danger);
+      margin-top: 14px;
+      font-size: 14px;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .copy-btn {
+      margin-top: 14px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
+  <div class="container">
     <h1>Eviction Auction Generator</h1>
     <form id="auctionForm" autocomplete="off">
+      <div>
         <label for="plot">Plot Name:</label>
         <input type="text" id="plot" name="plot">
-
+      </div>
+      <div>
         <label for="resell_price">Resell Price:</label>
         <input type="text" id="resell_price" name="resell_price">
-
+      </div>
+      <div>
         <label for="min_increase">Minimum Increase (leave empty for $500):</label>
         <input type="text" id="min_increase" name="min_increase">
-
-        <button type="submit">Generate Template</button>
+      </div>
+      <button type="submit">Generate Template</button>
     </form>
+
     <div id="error" class="error"></div>
     <div id="result" class="result" style="display:none;"></div>
-    <button id="copyBtn" class="copy-btn" style="display:none;">Copy to Clipboard</button>
-</div>
-<!-- Link to external JavaScript file -->
-<script src="auction-thing.js"></script>
+    <button id="copyBtn" class="copy-btn">Copy to Clipboard</button>
+  </div>
+
+  <script src="auction-thing.js"></script>
 </body>
 </html>
+
