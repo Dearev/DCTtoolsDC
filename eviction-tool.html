@@ -1,46 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>DemocracyCraft Eviction Tool</title>
-    <link rel="stylesheet" href="eviction-tool.css">
+  <meta charset="UTF-8" />
+  <title>DemocracyCraft Eviction Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121830;
+      --muted: #9aa4c7;
+      --text: #e8ecff;
+      --accent: #7aa2ff;
+      --accent-2: #a77bff;
+      --danger: #ff5e6c;
+      --border: #283055;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      font: 15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(122,162,255,.15), transparent),
+        radial-gradient(1000px 800px at 110% 10%, rgba(167,123,255,.16), transparent),
+        var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 22px;
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 14px; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s ease;
+    }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(122,162,255,.25);
+    }
+
+    .info-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    button {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,.25);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>DemocracyCraft Eviction Tool</h1>
-        <form id="evictionForm" autocomplete="off">
-            <div class="form-group">
-                <label for="plot">Plot:</label>
-                <input type="text" id="plot" name="plot" required>
-            </div>
-            <div class="form-group">
-                <label for="owner">Plot Owner:</label>
-                <input type="text" id="owner" name="owner" required>
-            </div>
-            <div class="form-group">
-                <label for="link">Link to Report:</label>
-                <input type="text" id="link" name="link" required>
-            </div>
-            <div class="form-group">
-                <label for="reason">Reason:</label>
-                <select id="reason" name="reason" required>
-                    <option value="">Select a reason</option>
-                    <option value="Eyesore">Eyesore</option>
-                    <option value="Lack of Progress">Lack of Progress</option>
-                    <option value="Non-Compliance">Non-Compliance</option>
-                    <option value="Inactivity">Inactivity</option>
-                </select>
-            </div>
-            <div class="info-group">
-                <div id="daysLabel">Days to fix: </div>
-                <div id="dateLabel">Eviction Date: </div>
-            </div>
-            <div class="button-group">
-                <button type="button" id="copySolutionBtn">Copy How to Solve</button>
-                <button type="button" id="copyCommandBtn">Copy Eviction Notice Command</button>
-            </div>
-        </form>
-    </div>
-    <script src="eviction-tool.js"></script>
+  <div class="container">
+    <h1>DemocracyCraft Eviction Tool</h1>
+    <form id="evictionForm" autocomplete="off">
+      <div class="form-group">
+        <label for="plot">Plot:</label>
+        <input type="text" id="plot" name="plot" required>
+      </div>
+      <div class="form-group">
+        <label for="owner">Plot Owner:</label>
+        <input type="text" id="owner" name="owner" required>
+      </div>
+      <div class="form-group">
+        <label for="link">Link to Report:</label>
+        <input type="text" id="link" name="link" required>
+      </div>
+      <div class="form-group">
+        <label for="reason">Reason:</label>
+        <select id="reason" name="reason" required>
+          <option value="">Select a reason</option>
+          <option value="Eyesore">Eyesore</option>
+          <option value="Lack of Progress">Lack of Progress</option>
+          <option value="Non-Compliance">Non-Compliance</option>
+          <option value="Inactivity">Inactivity</option>
+        </select>
+      </div>
+      <div class="info-group">
+        <div id="daysLabel">Days to fix: </div>
+        <div id="dateLabel">Eviction Date: </div>
+      </div>
+      <div class="button-group">
+        <button type="button" id="copySolutionBtn">Copy How to Solve</button>
+        <button type="button" id="copyCommandBtn">Copy Eviction Notice Command</button>
+      </div>
+    </form>
+  </div>
+  <script src="eviction-tool.js"></script>
 </body>
 </html>
