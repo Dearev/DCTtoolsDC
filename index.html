@@ -1,32 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>App Switcher</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="switcher.css">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121830;
+      --muted: #9aa4c7;
+      --text: #e8ecff;
+      --accent: #7aa2ff;
+      --accent-2: #a77bff;
+      --border: #283055;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(122,162,255,.15), transparent),
+        radial-gradient(1000px 800px at 110% 10%, rgba(167,123,255,.16), transparent),
+        var(--bg);
+    }
+
+    /* HEADER */
+    header {
+      padding: 28px 24px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(11,16,32,.9) 0%, rgba(11,16,32,.55) 60%, rgba(11,16,32,0) 100%);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .title { display:flex; align-items:center; gap:14px; }
+    .title h1 { margin:0; font-weight:800; letter-spacing:.2px; font-size: clamp(20px, 3vw, 28px); }
+    .chip { font-size:12px; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color: var(--muted); }
+
+    /* CONTAINER */
+    .container {
+      max-width: 920px;
+      margin: 28px auto 40px;
+      padding: 0 20px 24px;
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    }
+
+    /* CARD */
+    .card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+      box-shadow: 0 6px 12px rgba(0,0,0,.2);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+      outline: none;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #3b4580;
+      background: linear-gradient(135deg, rgba(122,162,255,.12), rgba(167,123,255,.08));
+      box-shadow: 0 12px 20px rgba(0,0,0,.25);
+      color: var(--accent);
+    }
+    .card:focus-visible {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(122,162,255,.35), var(--shadow);
+    }
+
+    .icon {
+      font-size: 26px; line-height: 1; width: 36px; height: 36px; display:grid; place-items:center;
+      border-radius: 10px; border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+    }
+    .title-row { display:flex; align-items:center; gap:10px; }
+    .app-title { font-weight: 700; letter-spacing:.2px; }
+    .app-desc { color: var(--muted); font-size: 14px; }
+
+    /* FOOTER */
+    footer { text-align:center; color: var(--muted); font-size: 12px; padding: 18px; }
+
+    /* UTIL */
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Choose an App</h1>
-    <div class="card-row">
-      <div class="app-card" id="auction-thing-card" tabindex="0" onclick="switchApp('auction-thing.html')" onkeypress="if(event.key==='Enter'){switchApp('auction-thing.html');}">
-        <div class="app-icon">🏦</div>
-        <div class="app-title">Auction Tool</div>
-        <div class="app-desc">Auction Generator.</div>
-      </div>
-      <div class="app-card" id="eviction-tool-card" tabindex="0" onclick="switchApp('eviction-tool.html')" onkeypress="if(event.key==='Enter'){switchApp('eviction-tool.html');}">
-        <div class="app-icon">🏠❌</div>
-        <div class="app-title">Eviction Tool</div>
-        <div class="app-desc">Generate eviction reports.</div>
-      </div>
-      <div class="app-card" id="im-tool-card" tabindex="0" onclick="switchApp('im-tool.html')" onkeypress="if(event.key==='Enter'){switchApp('im-tool.html');}">
-        <div class="app-icon">🧾</div>
-        <div class="app-title">IM Tool</div>
-        <div class="app-desc">Pending reports and eviction commands.</div>
-      </div>
+  <header>
+    <div class="title">
+      <h1>App Switcher</h1>
+      <span class="chip">Quick Links</span>
     </div>
-  </div>
-  <script src="switcher.js"></script>
+  </header>
+
+  <main class="container" id="app-switcher" aria-labelledby="apps-heading">
+    <h2 id="apps-heading" class="sr-only">Choose an App</h2>
+
+    <div class="grid">
+      <!-- Auction Tool -->
+      <a class="card" href="auction-thing.html" id="auction-thing-card">
+        <div class="title-row">
+          <div class="icon" aria-hidden="true">🏦</div>
+          <div class="app-title">Auction Tool</div>
+        </div>
+        <div class="app-desc">Auction generator.</div>
+      </a>
+
+      <!-- Eviction Tool -->
+      <a class="card" href="eviction-tool.html" id="eviction-tool-card">
+        <div class="title-row">
+          <div class="icon" aria-hidden="true">🏠❌</div>
+          <div class="app-title">Eviction Tool</div>
+        </div>
+        <div class="app-desc">Generate eviction reports.</div>
+      </a>
+
+      <!-- IM Tool -->
+      <a class="card" href="im-tool.html" id="im-tool-card">
+        <div class="title-row">
+          <div class="icon" aria-hidden="true">🧾</div>
+          <div class="app-title">IM Tool</div>
+        </div>
+        <div class="app-desc">Pending reports and eviction commands.</div>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <small>Made by Dearev: https://github.com/Dearev | This tool has no relation to GlobalCenter Corporation (i just use the domain :3)</small>
+  </footer>
+
+  <script>
+    // Optional: preserve keyboard 'Enter' activation parity with the original.
+    // Anchor tags already handle Enter by default, but we keep IDs for compatibility.
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') card.click();
+      });
+    });
+  </script>
 </body>
 </html>
