@@ -1,6 +1,12 @@
 {
   "threads": [
     {
+      "thread_id": 31435,
+      "title": "C486 | Sep 9, 2025",
+      "prefix_id": 5,
+      "view_url": "https://www.democracycraft.net/threads/c486-sep-9-2025.31435/"
+    },
+    {
       "thread_id": 31436,
       "title": "C487 | Sep 9, 2025",
       "prefix_id": 5,
@@ -47,12 +53,6 @@
       "title": "c102 | Sep 9, 2025",
       "prefix_id": 5,
       "view_url": "https://www.democracycraft.net/threads/c102-sep-9-2025.31081/"
-    },
-    {
-      "thread_id": 31435,
-      "title": "C486 | Sep 9, 2025",
-      "prefix_id": 5,
-      "view_url": "https://www.democracycraft.net/threads/c486-sep-9-2025.31435/"
     },
     {
       "thread_id": 31434,
@@ -125,12 +125,6 @@
       "title": "S080 | Sep 9, 2025",
       "prefix_id": 5,
       "view_url": "https://www.democracycraft.net/threads/s080-sep-9-2025.31415/"
-    },
-    {
-      "thread_id": 31406,
-      "title": "s108 | Sep 8, 2025",
-      "prefix_id": 5,
-      "view_url": "https://www.democracycraft.net/threads/s108-sep-8-2025.31406/"
     }
   ]
 }
