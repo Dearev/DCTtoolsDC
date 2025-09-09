@@ -1,6 +1,12 @@
 {
   "threads": [
     {
+      "thread_id": 31415,
+      "title": "S080 | Sep 9, 2025",
+      "prefix_id": 5,
+      "view_url": "https://www.democracycraft.net/threads/s080-sep-9-2025.31415/"
+    },
+    {
       "thread_id": 31424,
       "title": "R079 | Sep 9, 2025",
       "prefix_id": 5,
@@ -119,12 +125,6 @@
       "title": "S035 | Sep 9, 2025",
       "prefix_id": 5,
       "view_url": "https://www.democracycraft.net/threads/s035-sep-9-2025.31423/"
-    },
-    {
-      "thread_id": 31415,
-      "title": "S080 | Sep 9, 2025",
-      "prefix_id": 5,
-      "view_url": "https://www.democracycraft.net/threads/s080-sep-9-2025.31415/"
     }
   ]
 }
