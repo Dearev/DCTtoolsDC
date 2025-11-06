@@ -1,16 +1,3 @@
 {
-  "threads": [
-    {
-      "thread_id": 32767,
-      "title": "RH019 | Nov 6, 2025",
-      "prefix_id": 5,
-      "view_url": "https://www.democracycraft.net/threads/rh019-nov-6-2025.32767/"
-    },
-    {
-      "thread_id": 32766,
-      "title": "C731 | Nov 6, 2025",
-      "prefix_id": 5,
-      "view_url": "https://www.democracycraft.net/threads/c731-nov-6-2025.32766/"
-    }
-  ]
+  "threads": []
 }
